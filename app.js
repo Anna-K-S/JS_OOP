@@ -1,55 +1,93 @@
-//Built-in JavaScript Constructors
-new String()    // A new String object
-new Number()    // A new Number object
-new Boolean()   // A new Boolean object
-new Object()    // A new Object object
-new Array()     // A new Array object
-new RegExp()    // A new RegExp object
-new Function()  // A new Function object
-new Date()      // A new Date object
-
-function Product(brand, price, discount) {
-  this.brand = brand;
+function Product (brandName, price, discount) {
+  this.brandName = brandName;
   this.price = price;
   this.discount = discount;
-  this.getPriceWithDiscount = function() {
-    return (this.price * (100 -this.discount)) / 100;
-  };
 }
 
-const apple = new Product('apple', 100, 14);
-const samsung = new Product('Samsung', 200, 34);
-console.log(apple, samsung);
+Product.prototype.getPriceWithDiscount = function() {
+  return (this.price * (100 -this.discount)) / 100;
+}
+
+Product.prototype.setPrice = function (newPrice) {
+  this.price = newPrice;
+};
+
+const apple = new Product('Apple', 100, 15);
+const samsung = new Product('Samsung', 150, 10);
+// console.log(apple.hasOwnProperty('brandName'));
+console.log(apple);
+console.log(samsung);
 
 console.log(apple.getPriceWithDiscount());
+console.log(samsung.getPriceWithDiscount());
+apple.setPrice(540);
+console.log(apple.getPriceWithDiscount());
 
+/* 
+Object.create(proto[, descriptors]) – создаёт пустой объект со свойством [[Prototype]], указанным как proto (может быть null), и необязательными дескрипторами свойств.
+Object.getPrototypeOf(obj) – возвращает свойство [[Prototype]] объекта obj (то же самое, что и геттер __proto__).
+Object.setPrototypeOf(obj, proto) – устанавливает свойство [[Prototype]] объекта obj как proto (то же самое, что и сеттер __proto__).*/
 
-function User(name) {
-  this.name = name;
-  this.isAdmin = false;
+const protoForObj = {
+  sayHello() {
+    return 'Hello'
+  },
+};
+
+const obj = Object.create(protoForObj, {
+  firstName : {
+    value: 'Sonya',
+  },
+});
+
+console.log(obj);
+console.log(obj.sayHello());
+
+/*Object.keys(obj) / Object.values(obj) / Object.entries(obj) – возвращают массив всех перечисляемых собственных строковых ключей/значений/пар ключ-значение.
+Object.getOwnPropertySymbols(obj) – возвращает массив всех собственных символьных ключей.
+Object.getOwnPropertyNames(obj) – возвращает массив всех собственных строковых ключей.
+Reflect.ownKeys(obj) – возвращает массив всех собственных ключей.
+obj.hasOwnProperty(key): возвращает true, если у obj есть собственное (не унаследованное) свойство с именем key. */
+
+//inheritance
+
+function User(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
 }
 
-let user = new User("Jack");
+User.prototype.getFullName = function() {
+  return `${this.firstName} ${this.lastName}`;
+};
 
-console.log(user.name); 
-console.log(user.isAdmin); 
+User.prototype.sayHello = function () {
+  return `Hello ${this.firstName} ${this.lastName}`;
+};
 
-function User(name) {
-  this.name = name;
+//Customer
 
-  this.sayHi = function() {
-    alert( "My name is: " + this.name );
-  };
+const user = new User('Sonya', 'Chmonigan');
+
+function Customer(firstName, lastName, membership) {
+  User.call(this, firstName, lastName);
+  this.membership = membership;
 }
+//функциональное наследование 
 
-let john = new User("John");
+/*function Customer(firstName, lastName, membership) {
+  User.apply(this, arguments);
+}
+*/
 
-john.sayHi(); 
+Customer.prototype = Object.create(User.prototype);
+//прототипное наследование 
+Customer.prototype.cunstructor = Customer;
 
+Customer.prototype.getMembership = function() {
+  return this.membership.toUpperCase();
+};
 
-/*In an object method, this refers to the object.
-Alone, this refers to the global object.
-In a function, this refers to the global object.
-In a function, in strict mode, this is undefined.
-In an event, this refers to the element that received the event.
-Methods like call(), apply(), and bind() can refer this to any object. */
+const customer = new Customer('Chmonya', 'Vonigan', 'basic');
+
+console.log(customer.getMembership());
+

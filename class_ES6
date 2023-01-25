@@ -1,0 +1,57 @@
+class ProductES {
+  constructor(brand, price, discount) {
+    this._brand = brand;
+    this.price = price;
+    this.discount = discount;
+  }
+  get brand() {
+    return this._brand; 
+  }
+  //Классы также позволяют использовать геттеры и сеттеры.
+
+  getPriceWithDiscount() {
+    return (this.price * (100 -this.discount)) / 100;
+  }
+  setPrice(newPrice) {
+    this.price = newPrice;
+  }
+  ['setDiscount'](newDiscount) {
+    this.discount = newDiscount;
+  }
+//статичный метод
+//если метод не требует обращения к 'this', то используются статические методы
+  static plus(x,y) {
+    return x + y;
+  }
+}
+
+const newProduct = new ProductES('Samsung', 200, 10);
+console.log(newProduct);
+console.log(newProduct.getPriceWithDiscount());
+newProduct.setPrice(500);
+console.log(newProduct.getPriceWithDiscount());
+console.log(ProductES.plus(1,2));
+
+class UserES{
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  getFullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+class CustomerES extends UserES {
+  constructor(firstName, lastName, membership) {
+    super(firstName, lastName);
+    this.membership = membership;
+  }
+  getFullName() {
+    const parentRes = super.getFullName();
+    return `${parentRes}, membership: ${this.membership}`;
+  }
+}
+const customerEs = new CustomerES('Chmonya', 'Vonigan', 'basic');
+
+console.log(customerEs);
